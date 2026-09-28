@@ -1,0 +1,336 @@
+D:\Projects\SpineResOUR\.venv\Scripts\python.exe D:\Projects\SpineResOUR\src\train.py
+--- Starting Training on cuda ---
+--> Visualizations will be saved to: visualizations/
+Epoch 1/50 [Train]: 100%|██████████| 535/535 [28:42<00:00,  3.22s/it, batch_loss=0.564]
+Epoch 1 Results:
+  Train Loss : 0.6082
+  Val Loss   : 0.3902
+  Val Dice   : 0.6661 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 2/50 [Train]: 100%|██████████| 535/535 [28:36<00:00,  3.21s/it, batch_loss=0.227]
+Epoch 2 Results:
+  Train Loss : 0.3415
+  Val Loss   : 0.5573
+  Val Dice   : 0.5692 (Target: >0.85)
+------------------------------
+Epoch 3/50 [Train]: 100%|██████████| 535/535 [28:34<00:00,  3.20s/it, batch_loss=0.169]
+Epoch 3 Results:
+  Train Loss : 0.3022
+  Val Loss   : 0.4093
+  Val Dice   : 0.6606 (Target: >0.85)
+------------------------------
+Epoch 4/50 [Train]: 100%|██████████| 535/535 [28:33<00:00,  3.20s/it, batch_loss=0.378]
+Epoch 4 Results:
+  Train Loss : 0.2819
+  Val Loss   : 0.8158
+  Val Dice   : 0.4072 (Target: >0.85)
+------------------------------
+Epoch 5/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.369]
+Epoch 5 Results:
+  Train Loss : 0.2719
+  Val Loss   : 0.4191
+  Val Dice   : 0.6939 (Target: >0.85)
+------------------------------
+Epoch 6/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.147]
+Epoch 6 Results:
+  Train Loss : 0.2291
+  Val Loss   : 0.2363
+  Val Dice   : 0.8477 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 7/50 [Train]: 100%|██████████| 535/535 [28:33<00:00,  3.20s/it, batch_loss=0.138]
+Epoch 7 Results:
+  Train Loss : 0.2280
+  Val Loss   : 0.1713
+  Val Dice   : 0.8760 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 8/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.101]
+Epoch 8 Results:
+  Train Loss : 0.1950
+  Val Loss   : 0.1549
+  Val Dice   : 0.8843 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 9/50 [Train]: 100%|██████████| 535/535 [28:33<00:00,  3.20s/it, batch_loss=0.328]
+Epoch 9 Results:
+  Train Loss : 0.2015
+  Val Loss   : 0.1777
+  Val Dice   : 0.8633 (Target: >0.85)
+------------------------------
+Epoch 10/50 [Train]: 100%|██████████| 535/535 [28:32<00:00,  3.20s/it, batch_loss=0.404]
+Epoch 10 Results:
+  Train Loss : 0.1822
+  Val Loss   : 0.1634
+  Val Dice   : 0.8880 (Target: >0.85)
+------------------------------
+Epoch 11/50 [Train]: 100%|██████████| 535/535 [28:32<00:00,  3.20s/it, batch_loss=0.0677]
+Epoch 11 Results:
+  Train Loss : 0.1724
+  Val Loss   : 0.1855
+  Val Dice   : 0.8684 (Target: >0.85)
+------------------------------
+Epoch 12/50 [Train]: 100%|██████████| 535/535 [28:30<00:00,  3.20s/it, batch_loss=0.0626]
+Epoch 12 Results:
+  Train Loss : 0.1902
+  Val Loss   : 0.1589
+  Val Dice   : 0.8873 (Target: >0.85)
+------------------------------
+Epoch 13/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.0661]
+Epoch 13 Results:
+  Train Loss : 0.1618
+  Val Loss   : 0.1722
+  Val Dice   : 0.8805 (Target: >0.85)
+------------------------------
+Epoch 14/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.393]
+Epoch 14 Results:
+  Train Loss : 0.1626
+  Val Loss   : 0.1462
+  Val Dice   : 0.8893 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 15/50 [Train]: 100%|██████████| 535/535 [28:30<00:00,  3.20s/it, batch_loss=0.254]
+Epoch 15 Results:
+  Train Loss : 0.1941
+  Val Loss   : 0.1550
+  Val Dice   : 0.8853 (Target: >0.85)
+------------------------------
+Epoch 16/50 [Train]: 100%|██████████| 535/535 [28:29<00:00,  3.20s/it, batch_loss=0.163]
+Epoch 16 Results:
+  Train Loss : 0.1646
+  Val Loss   : 0.1755
+  Val Dice   : 0.8807 (Target: >0.85)
+------------------------------
+Epoch 17/50 [Train]: 100%|██████████| 535/535 [28:30<00:00,  3.20s/it, batch_loss=0.0547]
+Epoch 17 Results:
+  Train Loss : 0.1688
+  Val Loss   : 0.1830
+  Val Dice   : 0.8762 (Target: >0.85)
+------------------------------
+Epoch 18/50 [Train]: 100%|██████████| 535/535 [28:29<00:00,  3.19s/it, batch_loss=0.0764]
+Epoch 18 Results:
+  Train Loss : 0.1512
+  Val Loss   : 0.1617
+  Val Dice   : 0.8890 (Target: >0.85)
+------------------------------
+Epoch 19/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.305]
+Epoch 19 Results:
+  Train Loss : 0.1802
+  Val Loss   : 0.1582
+  Val Dice   : 0.8882 (Target: >0.85)
+------------------------------
+Epoch 20/50 [Train]: 100%|██████████| 535/535 [28:31<00:00,  3.20s/it, batch_loss=0.14]
+Epoch 20 Results:
+  Train Loss : 0.1508
+  Val Loss   : 0.1363
+  Val Dice   : 0.8999 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 21/50 [Train]: 100%|██████████| 535/535 [28:32<00:00,  3.20s/it, batch_loss=0.311]
+Epoch 21 Results:
+  Train Loss : 0.1539
+  Val Loss   : 0.1385
+  Val Dice   : 0.8983 (Target: >0.85)
+------------------------------
+Epoch 22/50 [Train]: 100%|██████████| 535/535 [28:30<00:00,  3.20s/it, batch_loss=0.101]
+Epoch 22 Results:
+  Train Loss : 0.1650
+  Val Loss   : 0.1807
+  Val Dice   : 0.8830 (Target: >0.85)
+------------------------------
+Epoch 23/50 [Train]: 100%|██████████| 535/535 [28:42<00:00,  3.22s/it, batch_loss=0.0531]
+Epoch 23 Results:
+  Train Loss : 0.1601
+  Val Loss   : 0.5059
+  Val Dice   : 0.7740 (Target: >0.85)
+------------------------------
+Epoch 24/50 [Train]: 100%|██████████| 535/535 [28:37<00:00,  3.21s/it, batch_loss=0.126]
+Epoch 24 Results:
+  Train Loss : 0.1560
+  Val Loss   : 0.1722
+  Val Dice   : 0.8820 (Target: >0.85)
+------------------------------
+Epoch 25/50 [Train]: 100%|██████████| 535/535 [28:36<00:00,  3.21s/it, batch_loss=0.173]
+Epoch 25 Results:
+  Train Loss : 0.1380
+  Val Loss   : 0.1366
+  Val Dice   : 0.9021 (Target: >0.85)
+------------------------------
+Epoch 26/50 [Train]: 100%|██████████| 535/535 [28:48<00:00,  3.23s/it, batch_loss=0.33]
+Epoch 26 Results:
+  Train Loss : 0.1618
+  Val Loss   : 0.1522
+  Val Dice   : 0.8952 (Target: >0.85)
+------------------------------
+  --> Learning Rate Reduced: 0.001 -> 0.0001
+Epoch 27/50 [Train]: 100%|██████████| 535/535 [28:48<00:00,  3.23s/it, batch_loss=0.161]
+Epoch 27 Results:
+  Train Loss : 0.1406
+  Val Loss   : 0.1453
+  Val Dice   : 0.8981 (Target: >0.85)
+------------------------------
+Epoch 28/50 [Train]: 100%|██████████| 535/535 [28:45<00:00,  3.23s/it, batch_loss=0.105]
+Epoch 28 Results:
+  Train Loss : 0.1382
+  Val Loss   : 0.1428
+  Val Dice   : 0.8982 (Target: >0.85)
+------------------------------
+Epoch 29/50 [Train]: 100%|██████████| 535/535 [48:10<00:00,  5.40s/it, batch_loss=0.13]
+Epoch 29 Results:
+  Train Loss : 0.1337
+  Val Loss   : 0.1434
+  Val Dice   : 0.8985 (Target: >0.85)
+------------------------------
+Epoch 30/50 [Train]: 100%|██████████| 535/535 [40:22<00:00,  4.53s/it, batch_loss=0.0895]
+Epoch 30 Results:
+  Train Loss : 0.1301
+  Val Loss   : 0.1319
+  Val Dice   : 0.9045 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 31/50 [Train]: 100%|██████████| 535/535 [37:29<00:00,  4.20s/it, batch_loss=0.0749]
+Epoch 31 Results:
+  Train Loss : 0.1258
+  Val Loss   : 0.1301
+  Val Dice   : 0.9058 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 32/50 [Train]: 100%|██████████| 535/535 [50:43<00:00,  5.69s/it, batch_loss=0.141]
+Epoch 32 Results:
+  Train Loss : 0.1249
+  Val Loss   : 0.1327
+  Val Dice   : 0.9038 (Target: >0.85)
+------------------------------
+Epoch 33/50 [Train]: 100%|██████████| 535/535 [37:38<00:00,  4.22s/it, batch_loss=0.0816]
+Epoch 33 Results:
+  Train Loss : 0.1249
+  Val Loss   : 0.1399
+  Val Dice   : 0.9013 (Target: >0.85)
+------------------------------
+Epoch 34/50 [Train]: 100%|██████████| 535/535 [38:03<00:00,  4.27s/it, batch_loss=0.122]
+Epoch 34 Results:
+  Train Loss : 0.1200
+  Val Loss   : 0.1305
+  Val Dice   : 0.9057 (Target: >0.85)
+------------------------------
+Epoch 35/50 [Train]: 100%|██████████| 535/535 [36:22<00:00,  4.08s/it, batch_loss=0.0602]
+Epoch 35 Results:
+  Train Loss : 0.1201
+  Val Loss   : 0.1295
+  Val Dice   : 0.9064 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 36/50 [Train]: 100%|██████████| 535/535 [36:29<00:00,  4.09s/it, batch_loss=0.244]
+Epoch 36 Results:
+  Train Loss : 0.1173
+  Val Loss   : 0.1271
+  Val Dice   : 0.9072 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 37/50 [Train]: 100%|██████████| 535/535 [37:00<00:00,  4.15s/it, batch_loss=0.103]
+Epoch 37 Results:
+  Train Loss : 0.1201
+  Val Loss   : 0.1265
+  Val Dice   : 0.9092 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 38/50 [Train]: 100%|██████████| 535/535 [36:32<00:00,  4.10s/it, batch_loss=0.179]
+Epoch 38 Results:
+  Train Loss : 0.1199
+  Val Loss   : 0.1242
+  Val Dice   : 0.9094 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 39/50 [Train]: 100%|██████████| 535/535 [37:00<00:00,  4.15s/it, batch_loss=0.057]
+Epoch 39 Results:
+  Train Loss : 0.1183
+  Val Loss   : 0.1240
+  Val Dice   : 0.9100 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 40/50 [Train]: 100%|██████████| 535/535 [37:26<00:00,  4.20s/it, batch_loss=0.295]
+Epoch 40 Results:
+  Train Loss : 0.1211
+  Val Loss   : 0.1249
+  Val Dice   : 0.9105 (Target: >0.85)
+------------------------------
+Epoch 41/50 [Train]: 100%|██████████| 535/535 [37:35<00:00,  4.22s/it, batch_loss=0.0632]
+Epoch 41 Results:
+  Train Loss : 0.1172
+  Val Loss   : 0.1272
+  Val Dice   : 0.9091 (Target: >0.85)
+------------------------------
+Epoch 42/50 [Train]: 100%|██████████| 535/535 [37:34<00:00,  4.21s/it, batch_loss=0.0673]
+Epoch 42 Results:
+  Train Loss : 0.1147
+  Val Loss   : 0.1254
+  Val Dice   : 0.9102 (Target: >0.85)
+------------------------------
+Epoch 43/50 [Train]: 100%|██████████| 535/535 [37:54<00:00,  4.25s/it, batch_loss=0.07]
+Epoch 43 Results:
+  Train Loss : 0.1172
+  Val Loss   : 0.1270
+  Val Dice   : 0.9091 (Target: >0.85)
+------------------------------
+Epoch 44/50 [Train]: 100%|██████████| 535/535 [36:55<00:00,  4.14s/it, batch_loss=0.138]
+Epoch 44 Results:
+  Train Loss : 0.1133
+  Val Loss   : 0.1301
+  Val Dice   : 0.9082 (Target: >0.85)
+------------------------------
+Epoch 45/50 [Train]: 100%|██████████| 535/535 [36:23<00:00,  4.08s/it, batch_loss=0.307]
+Epoch 45 Results:
+  Train Loss : 0.1116
+  Val Loss   : 0.1235
+  Val Dice   : 0.9107 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 46/50 [Train]: 100%|██████████| 535/535 [36:25<00:00,  4.09s/it, batch_loss=0.169]
+Epoch 46 Results:
+  Train Loss : 0.1142
+  Val Loss   : 0.1288
+  Val Dice   : 0.9086 (Target: >0.85)
+------------------------------
+Epoch 47/50 [Train]: 100%|██████████| 535/535 [36:24<00:00,  4.08s/it, batch_loss=0.0674]
+Epoch 47 Results:
+  Train Loss : 0.1137
+  Val Loss   : 0.1240
+  Val Dice   : 0.9104 (Target: >0.85)
+------------------------------
+Epoch 48/50 [Train]: 100%|██████████| 535/535 [36:23<00:00,  4.08s/it, batch_loss=0.077]
+Epoch 48 Results:
+  Train Loss : 0.1121
+  Val Loss   : 0.1220
+  Val Dice   : 0.9122 (Target: >0.85)
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 49/50 [Train]: 100%|██████████| 535/535 [36:22<00:00,  4.08s/it, batch_loss=0.0817]
+Epoch 49 Results:
+  Train Loss : 0.1111
+  Val Loss   : 0.1319
+  Val Dice   : 0.9074 (Target: >0.85)
+------------------------------
+Epoch 50/50 [Train]: 100%|██████████| 535/535 [36:21<00:00,  4.08s/it, batch_loss=0.0479]
+Epoch 50 Results:
+  Train Loss : 0.1109
+  Val Loss   : 0.1226
+  Val Dice   : 0.9124 (Target: >0.85)
+------------------------------
+
+Process finished with exit code 0
