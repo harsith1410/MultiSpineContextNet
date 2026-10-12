@@ -105,7 +105,9 @@ def process_dataset():
             mask, mask_zooms = load_nifti(mask_path)
 
             vol = resample_volume(vol, vol_zooms, is_mask=False)
-            mask = resample_volume(mask, mask_zooms, is_mask=True)
+            factor = np.array(vol.shape) / np.array(mask.shape)
+            mask = scipy.ndimage.zoom(mask, factor, order=0)
+            assert vol.shape == mask.shape, f"{ct_path}: {vol.shape} vs {mask.shape}"
 
             vol = normalize_intensity(vol)
             img_patches, mask_patches = extract_patches(
