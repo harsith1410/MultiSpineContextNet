@@ -11,7 +11,7 @@ import numpy as np
 from tqdm import tqdm
 
 BATCH_SIZE = 4
-LR = 0.001
+LR = 1e-4
 EPOCHS = 20
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 if torch.backends.mps.is_available():
@@ -74,11 +74,25 @@ def train():
     fixed_img = fixed_img.to(DEVICE)
     fixed_mask = fixed_mask.to(DEVICE)
 
-    vis_dir = "visualizations/multi"
+    # Separate visualization directory for Plan 2
+    vis_dir = "visualizations/multi_plan2"
     os.makedirs(vis_dir, exist_ok=True)
     print(f"--> Visualizations will be saved to: {vis_dir}/")
 
     model = SpineResUNet().to(DEVICE)
+
+    # --- Load Pre-trained Binary Weights (Plan 2) ---
+    binary_model_path = "models/best_model.pth"
+    if os.path.exists(binary_model_path):
+        print(f"Loading binary weights from {binary_model_path}...")
+        state = torch.load(binary_model_path, map_location=DEVICE)
+        # Filter out the final layer to accommodate channel mismatch
+        state = {k: v for k, v in state.items() if not k.startswith("final.")}
+        missing, unexpected = model.load_state_dict(state, strict=False)
+        print(f"Missing keys (should be final layer only): {missing}")
+    else:
+        print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
+    # ------------------------------------------------
 
     optimizer = optim.Adam(model.parameters(), lr=LR)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)
@@ -86,7 +100,8 @@ def train():
 
     best_val_loss = float("inf")
     os.makedirs("models", exist_ok=True)
-    os.makedirs("checkpoints/multi", exist_ok=True)
+    # Separate checkpoint directory for Plan 2
+    os.makedirs("checkpoints/multi_plan2", exist_ok=True)
 
     for epoch in range(EPOCHS):
         model.train()
@@ -145,11 +160,13 @@ def train():
 
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
-            torch.save(model.state_dict(), "models/best_model_multi.pth")
+            # Separate best model save path for Plan 2
+            torch.save(model.state_dict(), "models/best_model_multi_plan2.pth")
             print("  --> New Best Model Saved!")
             print("-" * 30)
 
-        torch.save(model.state_dict(), f"checkpoints/multi/model_epoch_{epoch + 1}.pth")
+        # Separate checkpoint save path for Plan 2
+        torch.save(model.state_dict(), f"checkpoints/multi_plan2/model_epoch_{epoch + 1}.pth")
 
 
 if __name__ == "__main__":
