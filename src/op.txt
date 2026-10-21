@@ -480,3 +480,74 @@ Traceback (most recent call last):
     inter = (p_c * tgt_c).sum()
             ^^^^^^^^^^^^^^^^^^^
 KeyboardInterrupt
+
+D:\Projects\SpineResOUR\.venv\Scripts\python.exe D:\Projects\SpineResOUR\src\multi_train.py
+--- Starting Training on cuda ---
+--> Visualizations will be saved to: visualizations/multi_plan2/
+Loading binary weights from models/best_model_multi_plan2.pth...
+Missing keys (should be final layer only): ['final.weight', 'final.bias']
+Epoch 1/20 [Train]: 100%|██████████| 535/535 [53:52<00:00,  6.04s/it, ce=0.162, dice=0.808, loss=0.97]
+Epoch 1 Results:
+  Train Loss : 1.4379
+  Val Loss   : 1.0116
+  Val FG Dice: 0.8629   <- finding the spine
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 2/20 [Train]: 100%|██████████| 535/535 [54:05<00:00,  6.07s/it, ce=0.0982, dice=0.562, loss=0.66]
+Epoch 2 Results:
+  Train Loss : 0.8716
+  Val Loss   : 0.8374
+  Val FG Dice: 0.8889   <- finding the spine
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 3/20 [Train]: 100%|██████████| 535/535 [54:02<00:00,  6.06s/it, ce=0.138, dice=0.693, loss=0.831]
+Epoch 3 Results:
+  Train Loss : 0.7025
+  Val Loss   : 0.7418
+  Val FG Dice: 0.9115   <- finding the spine
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 4/20 [Train]: 100%|██████████| 535/535 [54:13<00:00,  6.08s/it, ce=0.0273, dice=0.401, loss=0.428]
+Epoch 4 Results:
+  Train Loss : 0.6173
+  Val Loss   : 0.7719
+  Val FG Dice: 0.9143   <- finding the spine
+------------------------------
+Epoch 5/20 [Train]: 100%|██████████| 535/535 [54:52<00:00,  6.15s/it, ce=0.214, dice=0.675, loss=0.889]
+Epoch 5 Results:
+  Train Loss : 0.5418
+  Val Loss   : 0.9959
+  Val FG Dice: 0.7818   <- finding the spine
+------------------------------
+Epoch 6/20 [Train]: 100%|██████████| 535/535 [54:58<00:00,  6.17s/it, ce=0.095, dice=0.577, loss=0.672]
+Epoch 6 Results:
+  Train Loss : 0.4991
+  Val Loss   : 0.6430
+  Val FG Dice: 0.9196   <- finding the spine
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 7/20 [Train]: 100%|██████████| 535/535 [55:32<00:00,  6.23s/it, ce=0.0646, dice=0.453, loss=0.518]
+Epoch 7 Results:
+  Train Loss : 0.4700
+  Val Loss   : 0.5965
+  Val FG Dice: 0.9193   <- finding the spine
+------------------------------
+  --> New Best Model Saved!
+------------------------------
+Epoch 8/20 [Train]: 100%|██████████| 535/535 [55:09<00:00,  6.19s/it, ce=0.11, dice=0.441, loss=0.55]
+Epoch 8 Results:
+  Train Loss : 0.4268
+  Val Loss   : 0.7161
+  Val FG Dice: 0.9080   <- finding the spine
+------------------------------
+Epoch 9/20 [Train]: 100%|██████████| 535/535 [54:18<00:00,  6.09s/it, ce=0.0371, dice=0.349, loss=0.386]
+Epoch 9 Results:
+  Train Loss : 0.4027
+  Val Loss   : 0.6422
+  Val FG Dice: 0.9198   <- finding the spine
+------------------------------
+Epoch 10/20 [Train]:  68%|██████▊   | 364/535 [37:12<18:20,  6.43s/it, ce=0.0618, dice=0.143, loss=0.205]
