@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 BATCH_SIZE = 4
 LR = 0.001
-EPOCHS = 20
+EPOCHS = 100
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 if torch.backends.mps.is_available():
     DEVICE = "mps"
@@ -101,7 +101,7 @@ def train():
     best_val_loss = float("inf")
     os.makedirs("models", exist_ok=True)
     # Separate checkpoint directory for Plan 2
-    os.makedirs("checkpoints/multi_plan3", exist_ok=True)
+    os.makedirs("checkpoints/multi_ssl", exist_ok=True)
 
     for epoch in range(EPOCHS):
         model.train()
@@ -166,7 +166,7 @@ def train():
             print("-" * 30)
 
         # Separate checkpoint save path for Plan 2
-        torch.save(model.state_dict(), f"checkpoints/multi_plan3/model_epoch_{epoch + 1}.pth")
+        torch.save(model.state_dict(), f"checkpoints/multi_ssl/model_epoch_{epoch + 1}.pth")
 
 
 if __name__ == "__main__":

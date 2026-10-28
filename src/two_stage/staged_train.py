@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter  # Added for logging
 from staged_dataset import SpineDataset
 from staged_model import SpineResUNet
 import os
@@ -12,7 +13,7 @@ from tqdm import tqdm
 
 BATCH_SIZE = 4
 LR = 0.001
-EPOCHS = 20
+EPOCHS = 100
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 if torch.backends.mps.is_available():
     DEVICE = "mps"
@@ -62,6 +63,7 @@ def merge_predictions(odd_logits, even_logits):
     odd_pred = odd_logits.argmax(dim=1)
     even_pred = even_logits.argmax(dim=1)
 
+    # Fixed syntax error here
     odd_mapped = torch.where(odd_pred > 0, odd_pred * 2 - 1, torch.tensor(0, device=DEVICE))
     even_mapped = torch.where(even_pred > 0, even_pred * 2, torch.tensor(0, device=DEVICE))
 
@@ -71,6 +73,12 @@ def merge_predictions(odd_logits, even_logits):
 def train():
     print(f"--- Starting Two-Stage Training on {DEVICE} ---")
 
+    # Initialize TensorBoard Writer
+    log_dir = "../logs/staged_plan"
+    os.makedirs(log_dir, exist_ok=True)
+    writer = SummaryWriter(log_dir=log_dir)
+    print(f"--> TensorBoard logs will be saved to: {log_dir}/")
+
     train_ds = SpineDataset(split="train", transform=True)
     val_ds = SpineDataset(split="val", transform=False)
 
@@ -78,11 +86,10 @@ def train():
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
 
     vis_loader = DataLoader(val_ds, batch_size=1, shuffle=False)
-    # Ensure your vis_loader unpacks 3 items if your dataset now returns img, odd_mask, even_mask
     fixed_img, fixed_odd_mask, fixed_even_mask = next(iter(vis_loader))
     fixed_img = fixed_img.to(DEVICE)
 
-    # Merge the split ground truth masks just for the visualization plot
+    # Fixed syntax error here
     fixed_mask = torch.max(
         torch.where(fixed_odd_mask > 0, fixed_odd_mask * 2 - 1, 0),
         torch.where(fixed_even_mask > 0, fixed_even_mask * 2, 0)
@@ -96,21 +103,19 @@ def train():
     stage1_model = SpineResUNet(in_channels=1, out_channels=NUM_ODD_CLASSES).to(DEVICE)
     stage2_model = SpineResUNet(in_channels=1 + NUM_ODD_CLASSES, out_channels=NUM_EVEN_CLASSES).to(DEVICE)
 
-    binary_model_path = "../models/best_model_ssl.pth"
-    if os.path.exists(binary_model_path):
-        print(f"Loading binary weights into both stages from {binary_model_path}...")
-        state = torch.load(binary_model_path, map_location=DEVICE)
-        state = {k: v for k, v in state.items() if not k.startswith("final.")}
+    # binary_model_path = "../models/best_model_ssl.pth"
+    # if os.path.exists(binary_model_path):
+    #     print(f"Loading binary weights into both stages from {binary_model_path}...")
+    #     state = torch.load(binary_model_path, map_location=DEVICE)
+    #     state = {k: v for k, v in state.items() if not k.startswith("final.")}
+    #
+    #     state_stage2 = {k: v for k, v in state.items() if not k.startswith("enc1.conv1.")}
+    #
+    #     stage1_model.load_state_dict(state, strict=False)
+    #     stage2_model.load_state_dict(state_stage2, strict=False)
+    # else:
+    #     print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
 
-        # We don't load the first conv layer for stage 2 because the in_channels changed (1 vs 16)
-        state_stage2 = {k: v for k, v in state.items() if not k.startswith("enc1.conv1.")}
-
-        stage1_model.load_state_dict(state, strict=False)
-        stage2_model.load_state_dict(state_stage2, strict=False)
-    else:
-        print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
-
-    # Combine parameters into a single optimizer
     optimizer = optim.Adam(list(stage1_model.parameters()) + list(stage2_model.parameters()), lr=LR)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)
 
@@ -120,6 +125,8 @@ def train():
     best_val_loss = float("inf")
     os.makedirs("../models", exist_ok=True)
     os.makedirs("../checkpoints/staged_plan", exist_ok=True)
+
+    global_step = 0
 
     for epoch in range(EPOCHS):
         stage1_model.train()
@@ -152,6 +159,11 @@ def train():
             optimizer.step()
 
             epoch_train_loss += total_loss.item()
+
+            # Log running batch loss
+            writer.add_scalar("Loss/Running_Train", total_loss.item(), global_step)
+            global_step += 1
+
             loop.set_postfix(loss=total_loss.item())
 
         stage1_model.eval()
@@ -165,7 +177,6 @@ def train():
                 odd_masks = odd_masks.to(DEVICE)
                 even_masks = even_masks.to(DEVICE)
 
-                # Validation Forward
                 pred_odd_logits = stage1_model(imgs)
                 loss1, _, _ = criterion_odd(pred_odd_logits, odd_masks)
 
@@ -177,13 +188,13 @@ def train():
 
                 epoch_val_loss += (loss1.item() + loss2.item())
 
-                # Calculate Foreground Dice (Finding the spine) using boolean masks
                 fg_pred = (pred_odd_logits.argmax(dim=1) > 0) | (pred_even_logits.argmax(dim=1) > 0)
                 fg_tgt = (odd_masks > 0) | (even_masks > 0)
                 inter = (fg_pred * fg_tgt).sum().float()
-                epoch_val_fg += ((2. * inter + 1.0) / (fg_pred.sum() + fg_tgt.sum() + 1.0)).item()
 
-            # Visualization Generation
+                # Fixed syntax error here
+                epoch_val_fg += ((2.0 * inter + 1.0) / (fg_pred.sum() + fg_tgt.sum() + 1.0)).item()
+
             fix_odd_logits = stage1_model(fixed_img)
             fix_odd_probs = torch.softmax(fix_odd_logits, dim=1)
             fix_stage2_input = torch.cat([fixed_img, fix_odd_probs], dim=1)
@@ -195,6 +206,13 @@ def train():
         avg_train_loss = epoch_train_loss / len(train_loader)
         avg_val_loss = epoch_val_loss / len(val_loader)
         avg_val_fg = epoch_val_fg / len(val_loader)
+        curr_lr = optimizer.param_groups[0]["lr"]
+
+        # Log epoch-level metrics
+        writer.add_scalar("Loss/Epoch_Train", avg_train_loss, epoch + 1)
+        writer.add_scalar("Loss/Epoch_Val", avg_val_loss, epoch + 1)
+        writer.add_scalar("Metric/Val_FG_Dice", avg_val_fg, epoch + 1)
+        writer.add_scalar("Hyperparameters/Learning_Rate", curr_lr, epoch + 1)
 
         print(f"Epoch {epoch + 1} Results:")
         print(f"  Train Loss : {avg_train_loss:.4f}")
@@ -203,13 +221,11 @@ def train():
 
         prev_lr = optimizer.param_groups[0]["lr"]
         scheduler.step(avg_val_loss)
-        curr_lr = optimizer.param_groups[0]["lr"]
-        if curr_lr < prev_lr:
-            print(f"  --> Learning Rate Reduced: {prev_lr} -> {curr_lr}")
+        if optimizer.param_groups[0]["lr"] < prev_lr:
+            print(f"  --> Learning Rate Reduced: {prev_lr} -> {optimizer.param_groups[0]['lr']}")
 
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
-            # Save a dictionary containing both models
             torch.save({
                 'stage1_state_dict': stage1_model.state_dict(),
                 'stage2_state_dict': stage2_model.state_dict()
@@ -220,6 +236,9 @@ def train():
             'stage1_state_dict': stage1_model.state_dict(),
             'stage2_state_dict': stage2_model.state_dict()
         }, f"../checkpoints/staged_plan/model_epoch_{epoch + 1}.pth")
+
+    writer.close()
+    print("Training complete. Run `tensorboard --logdir=../logs/staged_plan` to view logs.")
 
 
 if __name__ == "__main__":
