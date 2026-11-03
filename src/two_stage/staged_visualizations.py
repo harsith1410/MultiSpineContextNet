@@ -12,9 +12,9 @@ from tqdm import tqdm
 from staged_model import SpineResUNet
 
 # ---------------- Config ----------------
-VAL_DIR = "../data/raw/03_test"
-MODEL_PATH = "./models/best_model_staged.pth"
-OUT_DIR = "./test_preds_staged"
+VAL_DIR = "../../data/raw/03_test"
+MODEL_PATH = "../models/best_model_staged.pth"
+OUT_DIR = "../test_preds_staged"
 WINDOW_SIZE = (128, 128, 64)
 STRIDE = (64, 64, 32)
 NUM_CLASSES = 29
