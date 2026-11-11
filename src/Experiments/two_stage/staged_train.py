@@ -74,7 +74,7 @@ def train():
     print(f"--- Starting Two-Stage Training on {DEVICE} ---")
 
     # Initialize TensorBoard Writer
-    log_dir = "../logs/staged_plan"
+    log_dir = "../../logs/staged_plan"
     os.makedirs(log_dir, exist_ok=True)
     writer = SummaryWriter(log_dir=log_dir)
     print(f"--> TensorBoard logs will be saved to: {log_dir}/")
@@ -95,7 +95,7 @@ def train():
         torch.where(fixed_even_mask > 0, fixed_even_mask * 2, 0)
     ).to(DEVICE)
 
-    vis_dir = "../visualizations/staged_plan"
+    vis_dir = "../../visualizations/staged_plan"
     os.makedirs(vis_dir, exist_ok=True)
     print(f"--> Visualizations will be saved to: {vis_dir}/")
 
@@ -103,18 +103,18 @@ def train():
     stage1_model = SpineResUNet(in_channels=1, out_channels=NUM_ODD_CLASSES).to(DEVICE)
     stage2_model = SpineResUNet(in_channels=1 + NUM_ODD_CLASSES, out_channels=NUM_EVEN_CLASSES).to(DEVICE)
 
-    # binary_model_path = "../models/best_model_ssl.pth"
-    # if os.path.exists(binary_model_path):
-    #     print(f"Loading binary weights into both stages from {binary_model_path}...")
-    #     state = torch.load(binary_model_path, map_location=DEVICE)
-    #     state = {k: v for k, v in state.items() if not k.startswith("final.")}
-    #
-    #     state_stage2 = {k: v for k, v in state.items() if not k.startswith("enc1.conv1.")}
-    #
-    #     stage1_model.load_state_dict(state, strict=False)
-    #     stage2_model.load_state_dict(state_stage2, strict=False)
-    # else:
-    #     print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
+    binary_model_path = "../../models/best_model_multi_ssl.pth"
+    if os.path.exists(binary_model_path):
+        print(f"Loading binary weights into both stages from {binary_model_path}...")
+        state = torch.load(binary_model_path, map_location=DEVICE)
+        state = {k: v for k, v in state.items() if not k.startswith("final.")}
+
+        state_stage2 = {k: v for k, v in state.items() if not k.startswith("enc1.conv1.")}
+
+        stage1_model.load_state_dict(state, strict=False)
+        stage2_model.load_state_dict(state_stage2, strict=False)
+    else:
+        print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
 
     optimizer = optim.Adam(list(stage1_model.parameters()) + list(stage2_model.parameters()), lr=LR)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)
