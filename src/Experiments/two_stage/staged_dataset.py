@@ -6,7 +6,7 @@ import glob
 
 
 class SpineDataset(Dataset):
-    def __init__(self, split="train", root_dir="../../data/processed", transform=False):
+    def __init__(self, split="train", root_dir="../../../", transform=False):
         self.root_dir = root_dir
         self.split = split
         self.transform = transform
