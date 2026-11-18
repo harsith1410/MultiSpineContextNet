@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from multi_dataset import SpineDataset
@@ -11,22 +12,26 @@ import numpy as np
 from tqdm import tqdm
 
 BATCH_SIZE = 4
-LR = 0.001
+LR = 0.005
 EPOCHS = 100
+REC_WEIGHT = 0.5
+
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 if torch.backends.mps.is_available():
     DEVICE = "mps"
-if DEVICE == 'cuda':
-    torch.cuda.set_per_process_memory_fraction(0.45)
+
+
+def make_masked_input(clean, patch=16, ratio=0.5):
+    B, _, X, Y, Z = clean.shape
+    keep = (torch.rand(B, 1, X // patch, Y // patch, Z // patch,
+                       device=clean.device) > ratio).float()
+    keep = F.interpolate(keep, size=(X, Y, Z), mode="nearest")
+    return torch.cat([clean * keep, keep], dim=1), keep  # 2 channels
+
 
 def save_visualization(epoch, img_tensor, mask_tensor, pred_tensor, save_dir):
 
-    # Sagittal slice: fix the left-right axis so the vertebrae appear stacked
-    # head to foot and the numbering is actually readable.
-    # Pick the slice holding the most labelled voxels, since patches are not
-    # always centred on the spine.
-
-    mid = mask_tensor[0].sum(dim=(1, 2)).argmax().item()
+    mid = (mask_tensor[0] > 0).sum(dim=(1, 2)).argmax().item()
 
     img_slice = np.rot90(img_tensor[0, 0, mid].cpu().numpy())
     mask_slice = np.rot90(mask_tensor[0, mid].cpu().numpy())
@@ -75,38 +80,24 @@ def train():
     fixed_img = fixed_img.to(DEVICE)
     fixed_mask = fixed_mask.to(DEVICE)
 
-    # Separate visualization directory for Plan 2
-    vis_dir = "../../visualizations/multi_plan_ynet"
+    vis_dir = "visualizations/multi_plan_ssl"
     os.makedirs(vis_dir, exist_ok=True)
     print(f"--> Visualizations will be saved to: {vis_dir}/")
 
     model = SpineResUNet().to(DEVICE)
 
-    # # --- Load Pre-trained Binary Weights (Plan 2) ---
-    # binary_model_path = "../../models/best_model_multi_ssl.pth"
-    # if os.path.exists(binary_model_path):
-    #     print(f"Loading binary weights from {binary_model_path}...")
-    #     state = torch.load(binary_model_path, map_location=DEVICE)
-    #     # Filter out the final layer to accommodate channel mismatch
-    #     state = {k: v for k, v in state.items() if not k.startswith("final.")}
-    #     missing, unexpected = model.load_state_dict(state, strict=False)
-    #     print(f"Missing keys (should be final layer only): {missing}")
-    # else:
-    #     print(f"WARNING: Binary checkpoint not found at {binary_model_path}. Training from scratch.")
-    # ------------------------------------------------
-
     optimizer = optim.Adam(model.parameters(), lr=LR)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "max", patience=5)
     criterion = CEDiceLoss(num_classes=NUM_CLASSES, include_bg=False)
 
-    best_val_loss = float("inf")
-    os.makedirs("../../models", exist_ok=True)
-    # Separate checkpoint directory for Plan 2
-    os.makedirs("../../checkpoints/multi_ynet", exist_ok=True)
+    best_val_dice = -1.0
+    os.makedirs("models", exist_ok=True)
+    os.makedirs("checkpoints/multi_ssl", exist_ok=True)
 
     for epoch in range(EPOCHS):
         model.train()
         epoch_train_loss = 0
+        epoch_train_seg = 0
 
         loop = tqdm(
             train_loader, desc=f"Epoch {epoch + 1}/{EPOCHS} [Train]", leave=True
@@ -115,59 +106,87 @@ def train():
         for imgs, masks in loop:
             imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
 
-            preds = model(imgs)
 
-            loss, loss_ce, loss_dice = criterion(preds, masks)
+            x, keep = make_masked_input(imgs)
+            seg, rec = model(x)
+            loss_seg, loss_ce, loss_dice = criterion(seg, masks)
+            hidden = 1 - keep
+            loss_rec = (F.l1_loss(rec, imgs, reduction="none") * hidden).sum() / (
+                hidden.sum() + 1e-6
+            )
+            loss = loss_seg + REC_WEIGHT * loss_rec
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
             epoch_train_loss += loss.item()
-            loop.set_postfix(loss=loss.item(), ce=loss_ce.item(), dice=loss_dice.item())
+            epoch_train_seg += loss_seg.item()
+            loop.set_postfix(
+                loss=loss.item(),
+                ce=loss_ce.item(),
+                dice=loss_dice.item(),
+                rec=loss_rec.item(),
+            )
 
         model.eval()
         epoch_val_loss = 0
         epoch_val_fg = 0
+        dice_sum = torch.zeros(NUM_CLASSES, device=DEVICE)
+        dice_cnt = torch.zeros(NUM_CLASSES, device=DEVICE)
 
         with torch.no_grad():
             for imgs, masks in val_loader:
                 imgs, masks = imgs.to(DEVICE), masks.to(DEVICE)
-                preds = model(imgs)
+                x, _ = make_masked_input(imgs, ratio=0)
+                seg, _ = model(x, with_recon=False)
 
-                loss, loss_ce, loss_dice = criterion(preds, masks)
+                loss, loss_ce, loss_dice = criterion(seg, masks)
 
                 epoch_val_loss += loss.item()
-                epoch_val_fg += foreground_dice(preds, masks)
+                epoch_val_fg += foreground_dice(seg, masks)
 
-            vis_pred = model(fixed_img)
+                d, present = hard_dice_stats(seg, masks)
+                dice_sum += d * present.float()
+                dice_cnt += present.float()
+
+            xv, _ = make_masked_input(fixed_img, ratio=0)
+            vis_pred, _ = model(xv, with_recon=False)
             save_visualization(epoch + 1, fixed_img, fixed_mask, vis_pred, vis_dir)
 
+        # per-class hard Dice over the whole val set, vertebrae only (skip background)
+        per_class = dice_sum[1:] / dice_cnt[1:].clamp(min=1)
+        seen = dice_cnt[1:] > 0
+        avg_val_dice = per_class[seen].mean().item() if seen.any() else 0.0
+
         avg_train_loss = epoch_train_loss / len(train_loader)
+        avg_train_seg = epoch_train_seg / len(train_loader)
         avg_val_loss = epoch_val_loss / len(val_loader)
         avg_val_fg = epoch_val_fg / len(val_loader)
 
         print(f"Epoch {epoch + 1} Results:")
-        print(f"  Train Loss : {avg_train_loss:.4f}")
-        print(f"  Val Loss   : {avg_val_loss:.4f}")
-        print(f"  Val FG Dice: {avg_val_fg:.4f}   <- finding the spine")
+        print(f"  Train Loss (total): {avg_train_loss:.4f}")
+        print(f"  Train Loss (seg)  : {avg_train_seg:.4f}   <- compare with Val Loss")
+        print(f"  Val Loss          : {avg_val_loss:.4f}")
+        print(f"  Val FG Dice       : {avg_val_fg:.4f}   <- finding the spine")
+        print(f"  Val Mean Dice     : {avg_val_dice:.4f}   <- vertebra labels (hard)")
         print("-" * 30)
 
         prev_lr = optimizer.param_groups[0]["lr"]
-        scheduler.step(avg_val_loss)
+        scheduler.step(avg_val_dice)
         curr_lr = optimizer.param_groups[0]["lr"]
         if curr_lr < prev_lr:
             print(f"  --> Learning Rate Reduced: {prev_lr} -> {curr_lr}")
 
-        if avg_val_loss < best_val_loss:
-            best_val_loss = avg_val_loss
-            # Separate best model save path for Plan 2
-            torch.save(model.state_dict(), "../../models/best_model_ynet.pth")
+        if avg_val_dice > best_val_dice:
+            best_val_dice = avg_val_dice
+            torch.save(model.state_dict(), "models/best_model_multi_ssl.pth")
             print("  --> New Best Model Saved!")
             print("-" * 30)
 
-        # Separate checkpoint save path for Plan 2
-        torch.save(model.state_dict(), f"../../checkpoints/multi_ynet/model_epoch_{epoch + 1}.pth")
+        torch.save(
+            model.state_dict(), f"checkpoints/multi_ssl/model_epoch_{epoch + 1}.pth"
+        )
 
 
 if __name__ == "__main__":
