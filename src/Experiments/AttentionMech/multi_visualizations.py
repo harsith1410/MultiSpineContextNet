@@ -12,9 +12,9 @@ from tqdm import tqdm
 from multi_model import SpineResUNet
 
 # ---------------- Config ----------------
-VAL_DIR = "../data/raw/03_test"
-MODEL_PATH = "./models/best_model_multi.pth"
-OUT_DIR = "./test_preds_multi"
+VAL_DIR = "../../../data/raw/03_test"
+MODEL_PATH = "../../models/best_model_attn_ca.pth"
+OUT_DIR = "./test_preds_ca"
 WINDOW_SIZE = (128, 128, 64)  # same as PATCH_SIZE in preprocessing
 STRIDE = (64, 64, 32)
 NUM_CLASSES = 29
@@ -177,7 +177,7 @@ def main():
     os.makedirs(os.path.join(OUT_DIR, "masks"), exist_ok=True)
     os.makedirs(os.path.join(OUT_DIR, "plots"), exist_ok=True)
 
-    model = SpineResUNet(in_channels=1, out_channels=NUM_CLASSES).to(DEVICE)
+    model = SpineResUNet(in_channels=1, out_channels=NUM_CLASSES, attn='ca').to(DEVICE)
     model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
     model.eval()
 
