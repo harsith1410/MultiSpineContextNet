@@ -75,11 +75,11 @@ def train():
     fixed_mask = fixed_mask.to(DEVICE)
 
     # Separate visualization directory for Plan 2
-    vis_dir = "../../visualizations/multi_plan_attn_ca"
+    vis_dir = "../../visualizations/multi_plan_attn_ca_max"
     os.makedirs(vis_dir, exist_ok=True)
     print(f"--> Visualizations will be saved to: {vis_dir}/")
 
-    model = SpineResUNet(attn='ca').to(DEVICE)
+    model = SpineResUNet(attn='ca_max').to(DEVICE)
 
     # # --- Load Pre-trained Binary Weights (Plan 2) ---
     # binary_model_path = "../models/best_model_ssl.pth"
@@ -101,7 +101,7 @@ def train():
     best_val_loss = float("inf")
     os.makedirs("../../models", exist_ok=True)
     # Separate checkpoint directory for Plan 2
-    os.makedirs("../../checkpoints/attn_ca", exist_ok=True)
+    os.makedirs("../../checkpoints/attn_ca_max", exist_ok=True)
 
     for epoch in range(EPOCHS):
         model.train()
@@ -161,12 +161,12 @@ def train():
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
             # Separate best model save path for Plan 2
-            torch.save(model.state_dict(), "../../models/best_model_attn_ca.pth")
+            torch.save(model.state_dict(), "../../models/best_model_attn_ca_max.pth")
             print("  --> New Best Model Saved!")
             print("-" * 30)
 
         # Separate checkpoint save path for Plan 2
-        torch.save(model.state_dict(), f"../../checkpoints/attn_ca/model_epoch_{epoch + 1}.pth")
+        torch.save(model.state_dict(), f"../../checkpoints/attn_ca_max/model_epoch_{epoch + 1}.pth")
 
 
 if __name__ == "__main__":

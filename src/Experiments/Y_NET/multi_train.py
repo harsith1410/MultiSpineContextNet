@@ -20,6 +20,9 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 if torch.backends.mps.is_available():
     DEVICE = "mps"
 
+if DEVICE == "cuda":
+    torch.cuda.set_per_process_memory_fraction(0.45)
+
 
 def make_masked_input(clean, patch=16, ratio=0.5):
     B, _, X, Y, Z = clean.shape
@@ -80,7 +83,7 @@ def train():
     fixed_img = fixed_img.to(DEVICE)
     fixed_mask = fixed_mask.to(DEVICE)
 
-    vis_dir = "visualizations/multi_plan_ssl"
+    vis_dir = "../../visualizations/multi_plan_ynet"
     os.makedirs(vis_dir, exist_ok=True)
     print(f"--> Visualizations will be saved to: {vis_dir}/")
 
@@ -91,8 +94,8 @@ def train():
     criterion = CEDiceLoss(num_classes=NUM_CLASSES, include_bg=False)
 
     best_val_dice = -1.0
-    os.makedirs("models", exist_ok=True)
-    os.makedirs("checkpoints/multi_ssl", exist_ok=True)
+    os.makedirs("../../models", exist_ok=True)
+    os.makedirs("../../checkpoints/ynet", exist_ok=True)
 
     for epoch in range(EPOCHS):
         model.train()
@@ -180,12 +183,12 @@ def train():
 
         if avg_val_dice > best_val_dice:
             best_val_dice = avg_val_dice
-            torch.save(model.state_dict(), "models/best_model_multi_ssl.pth")
+            torch.save(model.state_dict(), "../../models/best_model_ynet.pth")
             print("  --> New Best Model Saved!")
             print("-" * 30)
 
         torch.save(
-            model.state_dict(), f"checkpoints/multi_ssl/model_epoch_{epoch + 1}.pth"
+            model.state_dict(), f"../../checkpoints/ynet/model_epoch_{epoch + 1}.pth"
         )
 
 
